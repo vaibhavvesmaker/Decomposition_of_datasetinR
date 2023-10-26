@@ -1,0 +1,207 @@
+   ---
+title: "vv337_BF_HW5"
+output: html_document
+date: "2023-10-27"
+---
+```{r}
+```
+
+
+```{r}
+# Business Forecasting HW5
+# Name - Vaibhav Rajesh Vesmaker
+# Email - vaibhav.vesmaker@rutgers.edu
+
+
+
+library(fpp)
+```
+
+
+
+```{r}
+# Load the necessary libraries for forecasting
+library(fpp2)
+```
+
+
+
+```{r}
+# Load the Boston dataset
+data(boston) # picking up the boston dataset
+boston
+```
+
+
+
+```{r}
+# Print the first few rows of the Boston dataset
+head(boston)
+```
+
+
+
+```{r}
+# Check the class of the Boston dataset
+class(boston)
+```
+
+
+
+```{r}
+# Identify the frequency (seasonality) of the time series
+frequency(boston) # The cycle of this time series is 12 months in a year
+```
+
+
+
+```{r}
+# Generate a summary of the Boston dataset
+summary(boston)
+```
+
+
+
+```{r}
+# Check the dimensions of the dataset (number of rows and columns)
+dim(boston) # [1] 35  2   i.e 35 rows and 2 columns
+```
+
+
+
+```{r}
+# List the column names of the dataset
+colnames(boston)  # [1] "nyase" "bse"
+```
+
+
+```{r}
+# Plot the Boston time series data
+plot(boston)
+```
+
+
+
+```{r}
+# Check the number of rows in the dataset
+nrow(boston) # 35 rows
+```
+
+
+
+```{r}
+# Check the number of columns in the dataset
+ncol(boston) # 2 columns
+```
+
+
+
+```{r}
+# Create a time series object for the "bse" column
+bse_ts <- ts((boston[,"bse"]), frequency = 12, start = c(1967,1))
+bse_ts
+```
+
+
+
+```{r}
+# Check the class of the time series
+class(bse_ts)
+```
+
+
+
+```{r}
+# Perform seasonal decomposition using STL
+stl_decomp <- stl(bse_ts, s.window ="periodic")
+# Plot the decomposed components
+plot(stl_decomp)  # we can see that from 1967 to mid 1968, there is a positive trend and after that there is a negative trend...
+```
+
+
+
+```{r}
+# Print attributes of the decomposition
+attributes(stl_decomp)
+```
+
+
+
+```{r}
+# Extract the seasonally adjusted data
+# Lets print out a seasonal adjustment
+seasadj(stl_decomp) # Returns seasonally adjusted data constructed by removing the seasonal component.
+```
+
+
+
+```{r}
+boston[,"bse"] # this is bse column to refer the original values
+```
+
+
+
+```{r}
+# Overlay the original time series and seasonally adjusted data
+# Plot a line on the graph
+plot(bse_ts)
+lines(seasadj(stl_decomp), col="Red")
+```
+
+
+
+```{r}
+
+# Default period forecast
+f_stl <- forecast(stl_decomp)
+# Generate forecasts using the default number of periods (h = 15)
+# you can pass the # of period
+f_stl <- forecast(stl_decomp,h=15)
+f_stl
+```
+
+
+```{r}
+# Plot the forecasts
+plot(f_stl)
+```
+
+
+
+```{r}
+# Alternative method for decomposition using decompose
+
+decomp_bse_ts <- decompose(bse_ts)
+plot(decomp_bse_ts)
+```
+
+
+
+
+```{r}
+# Each one shows different attributes 
+attributes(decomp_bse_ts)
+```
+
+
+```{r}
+# Extract seasonally adjusted data using decompose
+seasadj(decomp_bse_ts)
+
+```
+**The code begins by loading necessary libraries, particularly the 'fpp' and 'fpp2' libraries for business forecasting. The Boston dataset is also loaded for further analysis.**
+
+**The dataset's properties are explored to better understand its structure. This includes checking its dimensions (number of rows and columns), extracting the column names (which are "nyase" and "bse"), and determining the class of the dataset, which helps identify it as a time series.**
+
+**The code identifies the dataset's seasonality, revealing that it follows a 12-month cycle, which is common for many time series datasets. This information is crucial for time series analysis and forecasting.**
+
+**Seasonal decomposition is performed using STL (Seasonal and Trend decomposition using Loess). This method helps break down the time series data into its individual components: seasonality, trend, and remainder (or residuals). The decomposition provides valuable insights into the underlying patterns in the data.**
+
+**After performing the decomposition, the code extracts the seasonally adjusted data, which represents the time series with the seasonal component removed. This adjusted data is then overlaid with the original time series to visualize the impact of the seasonal component on the data.**
+
+**The code proceeds to generate forecasts for the time series data. It uses an alternative method to decompose the time series data with the 'decompose' function. This provides an alternative view of the time series decomposition.**
+
+**Finally, the code extracts the seasonally adjusted data using 'decompose' and overlays it with the original data. This step allows for a comparison of the decomposition results between STL and 'decompose' methods.**
+
+**In summary, the code loads libraries, explores the dataset, identifies seasonality, performs seasonal decomposition using STL, extracts seasonally adjusted data, generates forecasts, and provides an alternative decomposition method for comparison. The code is a fundamental step in time series analysis, offering insights into the seasonality and trend components, which are crucial for forecasting in business contexts.**
+
